@@ -1,0 +1,67 @@
+﻿@model EventEase.Models.Search
+
+@{
+    ViewData["Title"] = "Search Events";
+}
+
+<h1>Search Events</h1>
+
+<form asp-action="Index" method="post" class="d-flex flex-wrap align-items-center gap-2 mb-4">
+
+    <input asp-for="EventName" class="form-control" placeholder="Search events..." style="flex: 2 1 300px;" />
+
+    <select asp-for="EventTypeId" class="form-select" style="flex: 1 1 150px;">
+        <option value="">All Event Types</option>
+        @foreach (var type in Model.EventTypes)
+        {
+            <option value="@type.EventTypeId" selected="@(type.EventTypeId == Model.EventTypeId ? "selected" : null)">
+                @type.Name
+            </option>
+        }
+    </select>
+
+    <input asp-for="StartDate" class="form-control" type="date" placeholder="Start Date" style="flex: 1 1 140px;" />
+    <input asp-for="EndDate" class="form-control" type="date" placeholder="End Date" style="flex: 1 1 140px;" />
+
+    <input asp-for="VenueName" class="form-control" placeholder="Venue Name" style="flex: 1 1 150px;" />
+
+    <select asp-for="VenueAvailable" class="form-select" style="flex: 1 1 150px;">
+        <option value="">Venue Availability</option>
+        <option value="true" selected="@(Model.VenueAvailable == true ? "selected" : null)">Available</option>
+        <option value="false" selected="@(Model.VenueAvailable == false ? "selected" : null)">Not Available</option>
+    </select>
+
+    <button type="submit" class="btn btn-primary" style="flex: 0 1 auto;">Search</button>
+
+</form>
+
+@if (Model.Results != null && Model.Results.Any())
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Event Name</th>
+                <th>Event Type</th>
+                <th>Date</th>
+                <th>Venue</th>
+                <th>Venue Available</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var ev in Model.Results)
+            {
+                <tr>
+                    <td>@ev.EventName</td>
+                    <td>@ev.EventType?.Name</td>
+                    <td>@ev.EventDate.ToShortDateString()</td>
+                    <td>@ev.Venue?.VenueName</td>
+                    <td>@(ev.Venue?.IsAvailable == true ? "Yes" : "No")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else if (Model.Results != null)
+{
+    <p>No events found matching your criteria.</p>
+}
